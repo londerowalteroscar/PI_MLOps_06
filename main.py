@@ -27,7 +27,14 @@ app = FastAPI()
 # Crear punto de entreada o endpoint:
 @app.get("/", tags=["Bienvenida"]) 
 def mensaje():
-    content = "<h2> Bienvenido al PI_MLOps_Engineer con <a href='http://127.0.0.1:8000/docs' > FastAPI </a> </h2>"
+    content = """
+    <h2> Bienvenido al PI_MLOps_Engineer </h2>
+    <p>Accede a la documentación:</p>
+    <ul>
+        <li><a href='http://127.0.0.1:8000/docs' >Local (FastAPI)</a></li>
+        <li><a href='https://pi-mlops-06.onrender.com/docs' >Producción (Render)</a></li>
+    </ul>
+    """
     return HTMLResponse(content=content)
 
 """

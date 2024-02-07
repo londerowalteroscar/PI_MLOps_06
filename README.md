@@ -14,9 +14,9 @@ Bienvenidos al proyecto individual de **MLOps Engineer**.
 
 ---
 
-Dirección del trabajo en Producción con <a href="https://pi-mlops-06.onrender.com" > FastAPI </a>
+Dirección del trabajo en Producción con <a href="https://pi-mlops-06.onrender.com/docs" > FastAPI </a>
 
-Dirección del video explicativo en <a href="https://pi-mlops-06.onrender.com" > YouTube </a>
+Dirección del video explicativo en <a href="https://youtu.be/EokEb7faNyE" > YouTube </a>
 
 Dirección del trabajo en el repositorio de <a href="https://github.com/londerowalteroscar/PI_MLOps_06" > GitHub </a>
 
