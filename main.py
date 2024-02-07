@@ -37,36 +37,36 @@ def mensaje():
 
 def developer(developer):
     # Filtrar el DataFrame para obtener solo los juegos del desarrollador especificado
-    df_desarrollador = df_games[df_games['developer'] == developer].copy()
+    df_desarrollador = df_games[df_games["developer"] == developer].copy()
 
-    # Convertir la columna 'release_date' a tipo datetime
-    df_desarrollador['release_date'] = pd.to_datetime(df_desarrollador['release_date'])
+    # Convertir la columna "release_date" a tipo datetime
+    df_desarrollador["release_date"] = pd.to_datetime(df_desarrollador["release_date"])
 
-    # Extraer el año de la columna 'release_date' y crear una nueva columna 'year'
-    df_desarrollador['year'] = df_desarrollador['release_date'].dt.year
+    # Extraer el año de la columna "release_date" y crear una nueva columna "year"
+    df_desarrollador["year"] = df_desarrollador["release_date"].dt.year
 
     # Contar la cantidad de items por año
-    items_por_anio = df_desarrollador.groupby('year').size().reset_index(name='Cantidad de Items')
+    items_por_anio = df_desarrollador.groupby("year").size().reset_index(name="Cantidad de Items")
 
     # Contar la cantidad de items gratuitos por año (precio igual a 0)
-    items_gratuitos_por_anio = df_desarrollador[df_desarrollador['price'] == 0].groupby('year').size().reset_index(name='Contenido Free')
+    items_gratuitos_por_anio = df_desarrollador[df_desarrollador["price"] == 0].groupby("year").size().reset_index(name="Contenido Free")
 
     # Fusionar los DataFrames por año
-    resultado = pd.merge(items_por_anio, items_gratuitos_por_anio, on='year', how='left').fillna(0)
+    resultado = pd.merge(items_por_anio, items_gratuitos_por_anio, on="year", how="left").fillna(0)
 
     # Calcular el porcentaje de contenido gratuito por año y redondear a 2 dígitos
-    resultado['Porcentaje Contenido Free'] = round((resultado['Contenido Free'] / resultado['Cantidad de Items']) * 100, 2)
+    resultado["Porcentaje Contenido Free"] = round((resultado["Contenido Free"] / resultado["Cantidad de Items"]) * 100, 2)
 
 
     # Formatear los resultados en un diccionario
-    resultado_dict = resultado.to_dict(orient='records')
+    resultado_dict = resultado.to_dict(orient="records")
 
     return resultado_dict
 
 @app.get("/best_developer_year/{developer}", tags=["Funciones"])
 async def best_developer_year(developer: str):
     try:
-        # Llamar a la función 'developer' para obtener el resultado
+        # Llamar a la función "developer" para obtener el resultado
         resultado = developer(developer)
         # Devolver el resultado como un diccionario Python, FastAPI lo convertirá a JSON automáticamente
         return resultado
@@ -87,13 +87,13 @@ async def best_developer_year(developer: str):
 def userdata(user_id: str):
     try:
         # Fusionar los DataFrames para obtener la información necesaria
-        merged_data = pd.merge(df_reviews_reviews[df_reviews_reviews['user_id'] == user_id], df_games, left_on='item_id', right_on='id', how='inner')
+        merged_data = pd.merge(df_reviews_reviews[df_reviews_reviews["user_id"] == user_id], df_games, left_on="item_id", right_on="id", how="inner")
 
         # Calcular la cantidad de dinero gastado por el usuario
-        dinero_gastado = merged_data['price'].sum()
+        dinero_gastado = merged_data["price"].sum()
 
         # Calcular el porcentaje de recomendación en base a reviews.recommend
-        porcentaje_recomendacion = (merged_data['recommend'].sum() / len(merged_data)) * 100
+        porcentaje_recomendacion = (merged_data["recommend"].sum() / len(merged_data)) * 100
 
         # Obtener la cantidad de items
         cantidad_items = len(merged_data)
@@ -137,26 +137,26 @@ def buscar_genero_en_string(cadena, genero_buscado):
 def UserForGenre(genero: str):
     try:
         # Filtrar los juegos que tienen el género buscado en la cadena de géneros
-        df_filtered_games = df_games[df_games['genres'].apply(lambda x: buscar_genero_en_string(x, genero))]
+        df_filtered_games = df_games[df_games["genres"].apply(lambda x: buscar_genero_en_string(x, genero))]
 
         # Fusionar los DataFrames para obtener la información necesaria
-        merged_data = pd.merge(df_filtered_games, df_items_items, left_on='id', right_on='item_id', how='inner')
+        merged_data = pd.merge(df_filtered_games, df_items_items, left_on="id", right_on="item_id", how="inner")
 
         if merged_data.empty:
             raise HTTPException(status_code=404, detail="No se encontraron datos para el género especificado")
 
         # Encontrar al usuario que acumula más horas jugadas
-        usuario_mas_horas = merged_data.loc[merged_data['playtime_forever'].idxmax()]['user_id']
+        usuario_mas_horas = merged_data.loc[merged_data["playtime_forever"].idxmax()]["user_id"]
 
         # Calcular la acumulación de horas jugadas por año de lanzamiento
-        merged_data['release_date'] = pd.to_datetime(merged_data['release_date'])
-        merged_data['year'] = merged_data['release_date'].dt.year
-        acumulacion_por_anio = merged_data.groupby('year')['playtime_forever'].sum().reset_index(name='Horas Acumuladas')
+        merged_data["release_date"] = pd.to_datetime(merged_data["release_date"])
+        merged_data["year"] = merged_data["release_date"].dt.year
+        acumulacion_por_anio = merged_data.groupby("year")["playtime_forever"].sum().reset_index(name="Horas Acumuladas")
 
         # Crear el diccionario de resultados
         resultado_dict = {
             "Usuario con más horas jugadas para el Género": usuario_mas_horas,
-            "Horas jugadas": acumulacion_por_anio.replace(np.nan, None).to_dict(orient='records')
+            "Horas jugadas": acumulacion_por_anio.replace(np.nan, None).to_dict(orient="records")
         }
 
         # Devolver el resultado como JSONResponse
@@ -173,7 +173,7 @@ def UserForGenre(genero: str):
 @app.get("/best_developer_year/{anio}", tags=["Funciones"])
 async def get_best_developer_year(anio: int):
     try:
-        # Llamar a la función 'best_developer_year' para obtener el resultado
+        # Llamar a la función "best_developer_year" para obtener el resultado
         resultado = best_developer_year(df_reviews_reviews, df_games, anio)
         # Devolver el resultado como JSONResponse
         return resultado
@@ -209,7 +209,7 @@ def developer_reviews_analysis(df_reviews_reviews, df_games, desarrolladora):
 @app.get("/developer_reviews_analysis/{desarrolladora}", tags=["Funciones"])
 async def get_developer_reviews_analysis(desarrolladora: str):
     try:
-        # Llamar a la función 'developer_reviews_analysis' para obtener el resultado
+        # Llamar a la función "developer_reviews_analysis" para obtener el resultado
         resultado = developer_reviews_analysis(df_reviews_reviews, df_games, desarrolladora)
         # Devolver el resultado como JSONResponse
         return resultado

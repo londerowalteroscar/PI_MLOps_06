@@ -14,83 +14,96 @@ Bienvenidos al proyecto individual de **MLOps Engineer**.
 
 ---
 
-Dirección del trabajo en Producción con <a href='https://deploy-pi-asi7.onrender.com/docs' > FastAPI </a>
+Dirección del trabajo en Producción con <a href="https://pi-mlops-06.onrender.com" > FastAPI </a>
+
+Dirección del video explicativo en <a href="https://pi-mlops-06.onrender.com" > YouTube </a>
+
+Dirección del trabajo en el repositorio de <a href="https://github.com/londerowalteroscar/PI_MLOps_06" > GitHub </a>
+
+
 
 # Instalación de Librerías
 
+pip install 
+  - pandas 
+  - numpy 
+  - matplotlib 
+  - fastapi 
+  - textblob 
+  - scikit-learn
+  - scipy 
 
-# ETL-EDA
 
-Este proyecto se enfoca en el análisis exploratorio de datos (EDA) y en la extracción, transformación y carga de datos (ETL) de conjuntos de datos proporcionados. A continuación se describe el flujo de trabajo y los procedimientos utilizados para analizar los datos de los juegos de Steam.
+# ETL (Extract, Transform, Load)
 
-## Extracción
-En esta sección, se emplean funciones específicas para extraer información de los archivos de datos proporcionados. Se utilizan dos funciones diferentes debido a las diferencias en el formato de los conjuntos de datos.
+## Extracción (Extract):
 
-## Transformación
-Aquí se detallan las transformaciones realizadas en los datos importados. Se extraen los diccionarios internos de los dataframes y se cambian los tipos de datos de las columnas según sea necesario. Además, se eliminan valores duplicados, filas nulas y columnas innecesarias, lo que ayuda a mantener la consistencia y reducir el tamaño de los conjuntos de datos.
+- Se definen funciones para abrir conjuntos de datos comprimidos, considerando distintos formatos y codificaciones.
+- Se cargan y descomprimen los conjuntos de datos relacionados con reseñas de usuarios, ítems y juegos de Steam.
+- Se muestran los DataFrames resultantes.
 
-## EDA
-En esta sección, se muestra la información contenida en los conjuntos de datos y se presentan las medidas estadísticas más importantes para cada columna. Se lleva a cabo un análisis de outliers y una normalización de precios en el dataframe "df_games". Se realiza un análisis de sentimiento para comprender la naturaleza de las reseñas de los usuarios. Se presentan gráficos que muestran la evolución del sentimiento a lo largo de los años y la distribución de sentimientos en las reseñas.
+## Transformación (Transform):
 
----
+- Se desanidan los diccionarios internos presentes en ciertas columnas de los DataFrames, creando nuevas columnas para cada clave especificada.
+ -Se realizan diversas operaciones de limpieza y transformación de los datos, como la conversión de tipos de datos, eliminación de filas nulas y detección y eliminación de filas duplicadas.
+ -Se realiza un análisis de sentimiento en las reseñas de usuarios, categorizando estas en positivas, negativas o neutrales.
+ -Se generan gráficos exploratorios para visualizar la distribución de sentimientos en las reseñas y su evolución a lo largo del tiempo.
+ -Se guardan los DataFrames resultantes en archivos CSV.
+
+## Carga (Load):
+
+- Se cargan nuevamente los DataFrames desde los archivos CSV generados previamente.
+
+## Análisis Exploratorio de Datos (EDA)
+
+- Se realiza una descripción general de los DataFrames utilizados en el proyecto, mostrando información relevante como tipos de datos, estadísticas descriptivas, etc.
+- Se exploran posibles outliers en ciertas columnas, realizando un análisis estadístico y visual para identificar valores atípicos.
+- Se realizan análisis adicionales, como la generación de gráficos de pastel y de líneas para visualizar tendencias y distribuciones.
+
+## Funciones para API
+
+- Se definen varias funciones destinadas a ser utilizadas en una API, las cuales permiten realizar consultas y obtener información específica sobre desarrolladores, usuarios, géneros de juegos, etc.
+- Modelos de ML para Sistema de Recomendación
+- Se comparte un ejemplo de implementación de un sistema de recomendación item-item utilizando el algoritmo k-Nearest Neighbors (k-NN) y la similitud de cosenos.
+- Se proporciona un script para obtener recomendaciones de juegos similares a uno dado, basándose en géneros y etiquetas.
 
 El análisis EDA-ETL proporciona información valiosa sobre la calidad de los juegos en la plataforma de Steam, así como sobre las tendencias y patrones en las opiniones de los usuarios. Los resultados obtenidos de este análisis pueden ser utilizados para realizar mejoras en los productos y para comprender mejor las preferencias de los consumidores.
 
 
 
-# Descripción de Funciones de la API
+# Descripción de las Funciones de la API
 
-1. **PlayTimeGenre(genero: str)**:
-   - Descripción: Devuelve el año con más horas jugadas para un género específico.
-   - Ejemplo de Entrada: "Indie"
-   - Respuesta Esperada: { "anio de lanzamiento con más horas jugadas para el género indie": 2006 }
+## Funciones
 
-2. **UserForGenre(genero: str)**:
-   - Descripción: Devuelve el usuario que acumula más horas jugadas para un género dado y una lista de la acumulación de horas jugadas por año.
-   - Ejemplo de Entrada: "Indie"
-   - Respuesta Esperada: {
-       "Usuario con más horas jugadas para Género indie": 765611983889673,
-       "Horas jugadas": [
-         {
-           "anio": 2006,
-           "Horas": 421652
-         }
-       ]
-     }
+1. **developer(developer: str)**:
+   - Esta función devuelve la cantidad de ítems y el porcentaje de contenido gratuito por año según la empresa desarrolladora especificada. Toma como parámetro el nombre del desarrollador y retorna un diccionario con la cantidad de ítems y el porcentaje de contenido gratuito por año.
 
-3. **UsersRecommend(anio: int)**:
-   - Descripción: Devuelve el top 3 de juegos MÁS recomendados por usuarios para un año dado.
-   - Ejemplo de Entrada: 2015
-   - Respuesta Esperada: {
-       "Puesto 1": "counter-strike: global offensive",
-       "Puesto 2": "garry's mod",
-       "Puesto 3": "unturned"
-     }
+2. **userdata(user_id: str)**:
+   - Esta función devuelve información sobre un usuario específico, incluyendo la cantidad de dinero gastado, el porcentaje de recomendación basado en las revisiones, y la cantidad de ítems adquiridos. Toma como parámetro el ID del usuario y retorna un diccionario con los datos correspondientes.
 
-4. **UsersNotRecommend(anio: int)**:
-   - Descripción: Devuelve el top 3 de juegos MENOS recomendados por usuarios para un año dado.
-   - Ejemplo de Entrada: 2015
-   - Respuesta Esperada: [
-       { "Puesto 1": "counter-strike: global offensive" },
-       { "Puesto 2": "payday 2" },
-       { "Puesto 3": "unturned" }
-     ]
+3. **UserForGenre(genero: str)**:
+   - Esta función devuelve el usuario que acumula más horas jugadas para un género de juegos dado, junto con una lista de la acumulación de horas jugadas por año de lanzamiento para ese género. Toma como parámetro el género de juego y retorna un diccionario con el usuario con más horas jugadas y la acumulación de horas por año.
 
-5. **sentiment_analysis(year: int)**:
-   - Descripción: Según el año de lanzamiento, devuelve una lista con la cantidad de registros de reseñas de usuarios que se encuentren categorizados con un análisis de sentimiento.
-   - Ejemplo de Entrada: 2015
-   - Respuesta Esperada: { "Negative": 1100, "Neutral": 891, "Positive": 2470 }
+4. **best_developer_year(anio: int)**:
+   - Esta función devuelve el top 3 de desarrolladores con juegos MÁS recomendados por usuarios para el año dado. Toma como parámetro el año y retorna un diccionario con los desarrolladores más recomendados.
 
-6. **recomendacion_juego_item_item(game_id:int)**:
-   - Descripción: En este ejemplo, utiliza un algoritmo de Machine Learning llamado k-Nearest Neighbors (k-NN) para realizar recomendaciones de juegos.
-   - Ejemplo de Entrada: 774277
-   - Respuesta Esperada: {
-       "games": [
-         "SNOW - All Access Legend Pass",
-         "SNOW - All Access Pro Pass",
-         "SNOW - Starter Pack",
-         "SNOW - Lifetime Pack",
-         "High Profits"
-       ]
-     }
-# PI_MLOps_06
+5. **developer_reviews_analysis(desarrolladora: str)**:
+   - Esta función analiza las reseñas de los usuarios asociadas a un desarrollador específico y devuelve la cantidad total de registros de reseñas categorizados con análisis de sentimiento positivo o negativo. Toma como parámetro el nombre del desarrollador y retorna un diccionario con los resultados del análisis.
+
+## Modelos de Recomendación
+
+#### a) k-Nearest Neighbors (k-NN)
+
+6. **get_recommendations_knn(game_id: int)**:
+   - Esta función devuelve una lista de juegos recomendados similares al juego especificado utilizando el algoritmo k-Nearest Neighbors. Toma como parámetro el ID del juego y retorna un diccionario con los juegos recomendados.
+
+7. **recomendacion_juego_knn(id_game: int)**:
+   - Esta ruta de la API devuelve recomendaciones de juegos similares al juego especificado utilizando el modelo k-NN. Toma como parámetro el ID del juego y retorna un diccionario con los juegos recomendados.
+
+#### b) Similitud de Cosenos
+
+8. **get_recommendations_sim_cos(game_id: int)**:
+   - Esta función devuelve una lista de juegos recomendados similares al juego especificado utilizando la similitud de cosenos. Toma como parámetro el ID del juego y retorna un diccionario con los juegos recomendados.
+
+9. **recomendacion_juego_sim_cos(id_game: int)**:
+   - Esta ruta de la API devuelve recomendaciones de juegos similares al juego especificado utilizando la similitud de cosenos. Toma como parámetro el ID del juego y retorna un diccionario con los juegos recomendados.
